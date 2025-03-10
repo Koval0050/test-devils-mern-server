@@ -1,103 +1,165 @@
-# MERN Data Manager
+# MERN Stack CSV Data Management API
 
-A full-stack MERN (MongoDB, Express.js, React, Node.js) application with JWT authentication that allows users to upload and view CSV data.
+A secure REST API built with Node.js, Express, and MongoDB for managing CSV data with authentication.
 
 ## Features
 
-- JWT Authentication
-- CSV file upload
-- Dynamic data table display
-- Clean and responsive UI
-- MongoDB integration
+- 🔐 JWT Authentication
+- 📊 CSV File Upload and Processing
+- 📋 Data Retrieval
+- 🔄 Automatic CSV to MongoDB Import
+- 🛡️ Protected Routes
+- 📁 Organized MVC Architecture
+
+## Project Structure
+
+```
+src/
+├── config/
+│   ├── database.js    # MongoDB connection configuration
+│   └── multer.js      # File upload configuration
+├── middleware/
+│   └── auth.js        # JWT authentication middleware
+├── models/
+│   └── Data.js        # MongoDB data schema
+├── controllers/
+│   ├── authController.js  # Authentication logic
+│   └── dataController.js  # Data operations logic
+└── routes/
+    ├── authRoutes.js     # Authentication routes
+    └── dataRoutes.js     # Data operation routes
+```
 
 ## Prerequisites
 
-- Node.js (v14 or higher)
-- MongoDB (running locally or a remote instance)
-- npm or yarn package manager
+- Node.js (v12 or higher)
+- MongoDB
+- npm or yarn
 
-## Setup
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+ADMIN_USERNAME=your_admin_username
+ADMIN_PASSWORD=your_admin_password
+PORT=5000
+```
+
+## Installation
 
 1. Clone the repository:
 
-```bash
-git clone <repository-url>
-cd devil-mern
-```
+   ```bash
+   git clone <repository-url>
+   cd <project-directory>
+   ```
 
-2. Install backend dependencies:
+2. Install dependencies:
 
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-3. Install frontend dependencies:
-
-```bash
-cd client
-npm install
-```
-
-4. Create a `.env` file in the root directory with the following variables:
-
-```
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/devil-mern
-JWT_SECRET=your-super-secret-jwt-key
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin123
-```
-
-## Running the Application
-
-1. Start the backend server:
-
-```bash
-npm run dev
-```
-
-2. In a separate terminal, start the frontend development server:
-
-```bash
-cd client
-npm start
-```
-
-3. Access the application at `http://localhost:3000`
-
-## Default Login Credentials
-
-- Username: admin
-- Password: admin123
-
-## Usage
-
-1. Log in using the default credentials
-2. Upload a CSV file using the upload button
-3. View the data in the table format
-4. Use the logout button to end your session
+3. Start the server:
+   ```bash
+   npm start
+   ```
 
 ## API Endpoints
 
-- POST `/api/login` - Authenticate user and get JWT token
-- GET `/api/data` - Get all data (requires authentication)
-- POST `/api/upload` - Upload CSV file (requires authentication)
+### Authentication
 
-## Technologies Used
+#### POST /api/login
 
-- Backend:
+Authenticate and receive a JWT token.
 
-  - Express.js
-  - MongoDB with Mongoose
-  - JWT for authentication
-  - Multer for file upload
-  - CSV-parser for CSV processing
+Request body:
 
-- Frontend:
-  - React with TypeScript
-  - Axios for API calls
-  - CSS Modules for styling
+```json
+{
+  "username": "your_username",
+  "password": "your_password"
+}
+```
 
-## License
+Response:
 
-MIT
+```json
+{
+  "token": "your_jwt_token"
+}
+```
+
+### Data Operations
+
+All data operations require authentication. Include the JWT token in the Authorization header:
+
+```
+Authorization: Bearer your_jwt_token
+```
+
+#### GET /api/data
+
+Retrieve all data entries.
+
+Response:
+
+```json
+[
+  {
+    "_id": "document_id",
+    "data": {
+      // CSV data fields
+    },
+    "createdAt": "timestamp",
+    "updatedAt": "timestamp"
+  }
+]
+```
+
+#### POST /api/upload
+
+Upload and process a CSV file.
+
+Request:
+
+- Method: POST
+- Headers:
+  - Authorization: Bearer your_jwt_token
+  - Content-Type: multipart/form-data
+- Body:
+  - file: CSV file
+
+Response:
+
+```json
+{
+  "message": "File processed successfully",
+  "count": number_of_records_processed
+}
+```
+
+## Error Handling
+
+The API returns appropriate HTTP status codes and error messages:
+
+- 200: Successful operation
+- 400: Bad request (e.g., missing file)
+- 401: Authentication required
+- 403: Invalid token
+- 500: Server error
+
+## Security Features
+
+- JWT-based authentication
+- Protected routes requiring valid tokens
+- Token expiration (1 hour)
+- Secure file upload handling
+- Environment variable configuration
+
+
+
+
